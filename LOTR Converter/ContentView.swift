@@ -12,16 +12,16 @@ struct ContentView: View {
     @State var leftAmount : String = ""
     @State var rightAmount : String = ""
     
-    @State var leftCurrency: Currency = .silverPiece
-    @State var rightCurrency: Currency = .goldPiece
+    @State var leftCurrency: Currency = Currency(rawValue: UserDefaults.standard.double(forKey: "leftCurrency")) ?? .silverPiece
+    @State var rightCurrency: Currency = Currency(rawValue: UserDefaults.standard.double(forKey: "rightCurrency")) ?? .goldPiece
     
     @State var showSelectCurrency = false
     @State var showExchangeInfo = false
     
-    @State var leftAmountTemp = ""
-    @State var rightAmountTemp = ""
-    @State var leftTiping = false
-    @State var rightTiping = false
+//    @State var leftAmountTemp = ""
+//    @State var rightAmountTemp = ""
+//    @State var leftTiping = false
+//    @State var rightTiping = false
     
     var body: some View {
         ZStack {
@@ -50,43 +50,8 @@ struct ContentView: View {
                 HStack {
                     // Left conversion section
                     
-                    VStack {
-                        // Currency
-                        HStack {
-                            // Currency image
-                            Image(CurrencyImage.allCases[Currency.allCases.firstIndex(of: leftCurrency)!].rawValue)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 33, height: 33)
-                            // Currency text
-                            Text(CurrencyText.allCases[Currency.allCases.firstIndex(of: leftCurrency)!].rawValue)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                        }
-                        .padding(.bottom, -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                        }
-                        .sheet(isPresented: $showSelectCurrency, content: {
-                            SelectCurrency(leftCurrency: $leftCurrency, rightCurrency: $rightCurrency)
-                        })
-                        // Text Field
-                        TextField("Amount", text: $leftAmount, onEditingChanged: {
-                            tiping in
-                            leftTiping = tiping
-                            leftAmountTemp = leftAmount
-                        })
-                            .background(Color(UIColor.systemGray6))
-                            .padding(7)
-                            .cornerRadius(7)
-                            .keyboardType(.decimalPad)
-                            .onChange(of: leftTiping ? leftAmount : leftAmountTemp, { oldValue, newValue in
-                                rightAmount = leftCurrency.convert(amountString: leftAmount, to: rightCurrency)
-                            })
-                            .onChange(of: leftCurrency) { oldValue, newValue in
-                                leftAmount = rightCurrency.convert(amountString: rightAmount, to: leftCurrency)
-                            }
-                    }
+                    ConversionSection(amount: $leftAmount, otherAmount: $rightAmount, currency: $leftCurrency, otherCurrency: $rightCurrency)
+                    
                     Spacer()
                     
                     // Equal sign
@@ -97,45 +62,8 @@ struct ContentView: View {
                     Spacer()
                     
                     // Right conversion section
-                
-                    VStack {
-                        // Currency
-                        HStack {
-                            // Currency text
-                            Text(CurrencyText.allCases[Currency.allCases.firstIndex(of: rightCurrency)!].rawValue)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            
-                            // Currency image
-                            Image(CurrencyImage.allCases[Currency.allCases.firstIndex(of: rightCurrency)!].rawValue)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 33, height: 33)
-                            
-                        }
-                        .padding(.bottom, -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                        }
-                        .sheet(isPresented: $showSelectCurrency, content: {
-                            SelectCurrency(leftCurrency: $leftCurrency, rightCurrency: $rightCurrency)
-                        })
-                        
-                        // Text Field
-                        TextField("Amount", text: $rightAmount)
-                            .background(Color(UIColor.systemGray6))
-                            .padding(7)
-                            .cornerRadius(7)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.decimalPad)
-                            .onChange(of: rightTiping ? rightAmount : rightAmountTemp, { oldValue, newValue in
-                                leftAmount = rightCurrency.convert(amountString: rightAmount, to: leftCurrency)
-                            })
-                            .onChange(of: rightCurrency) { oldValue, newValue in
-                                rightAmount = leftCurrency.convert(amountString: leftAmount, to: rightCurrency)
-                            }
-                        
-                    }
+                    
+                    ConversionSection(amount: $rightAmount, otherAmount: $leftAmount, currency: $rightCurrency, otherCurrency: $leftCurrency)
                     
                 }
                 .padding()
