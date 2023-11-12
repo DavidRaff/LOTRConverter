@@ -24,22 +24,33 @@ struct ConversionSection: View {
         VStack {
             // Currency
             HStack {
-                // Currency image
-                Image(CurrencyImage.allCases[Currency.allCases.firstIndex(of: currency)!].rawValue)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 33, height: 33)
+                if side == "leftCurrency" {
+                    // Currency image
+                    Image(CurrencyImage.allCases[Currency.allCases.firstIndex(of: currency)!].rawValue)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 33, height: 33)
+                }
+                
                 // Currency text
                 Text(CurrencyText.allCases[Currency.allCases.firstIndex(of: currency)!].rawValue)
                     .font(.headline)
                     .foregroundStyle(.white)
+                
+                if side == "rightCurrency" {
+                    // Currency image
+                    Image(CurrencyImage.allCases[Currency.allCases.firstIndex(of: currency)!].rawValue)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 33, height: 33)
+                }
             }
             .padding(.bottom, -5)
             .onTapGesture {
                 showSelectCurrency.toggle()
             }
             .sheet(isPresented: $showSelectCurrency, content: {
-                SelectCurrency(leftCurrency: $currency, rightCurrency: $otherCurrency)
+                SelectCurrency(leftCurrency: side == "leftCurrency" ? $currency : $otherCurrency, rightCurrency: side == "leftCurrency" ? $otherCurrency : $currency)
             })
             // Text Field
             TextField("Amount", text: $amount, onEditingChanged: {
@@ -50,6 +61,7 @@ struct ConversionSection: View {
                 .background(Color(UIColor.systemGray6))
                 .padding(7)
                 .cornerRadius(7)
+                .multilineTextAlignment(side == "leftCurrency" ? .leading : .trailing)
                 .keyboardType(.decimalPad)
                 .onChange(of: typing ? amount : amountTemp, { oldValue, newValue in
                     otherAmount = currency.convert(amountString: amount, to: otherCurrency)
