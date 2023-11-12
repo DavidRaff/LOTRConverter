@@ -14,6 +14,7 @@ struct ConversionSection: View {
     @Binding var currency: Currency
     @Binding var otherCurrency: Currency
     
+    @State var side : String
     @State var amountTemp = ""
     @State var typing = false
     @State var showSelectCurrency = false
@@ -55,12 +56,12 @@ struct ConversionSection: View {
                 })
                 .onChange(of: currency) { oldValue, newValue in
                     amount = otherCurrency.convert(amountString: otherAmount, to: currency)
-                    UserDefaults.standard.set(currency.rawValue, forKey: "leftCurrency")
+                    UserDefaults.standard.set(currency.rawValue, forKey: side)
                 }
         }
     }
 }
 
 #Preview {
-    ConversionSection(amount: .constant(""), otherAmount: .constant(""), currency: .constant(.silverPiece), otherCurrency: .constant(.goldPiece))
+    ConversionSection(amount: .constant(""), otherAmount: .constant(""), currency: .constant(.silverPiece), otherCurrency: .constant(.goldPiece), side: "leftCurrency")
 }

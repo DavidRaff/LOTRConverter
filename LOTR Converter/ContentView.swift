@@ -50,7 +50,7 @@ struct ContentView: View {
                 HStack {
                     // Left conversion section
                     
-                    ConversionSection(amount: $leftAmount, otherAmount: $rightAmount, currency: $leftCurrency, otherCurrency: $rightCurrency)
+                    ConversionSection(amount: $leftAmount, otherAmount: $rightAmount, currency: $leftCurrency, otherCurrency: $rightCurrency, side: "leftCurrency")
                     
                     Spacer()
                     
@@ -63,7 +63,7 @@ struct ContentView: View {
                     
                     // Right conversion section
                     
-                    ConversionSection(amount: $rightAmount, otherAmount: $leftAmount, currency: $rightCurrency, otherCurrency: $leftCurrency)
+                    ConversionSection(amount: $rightAmount, otherAmount: $leftAmount, currency: $rightCurrency, otherCurrency: $leftCurrency, side: "rightCurrency")
                     
                 }
                 .padding()
